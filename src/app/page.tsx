@@ -46,9 +46,9 @@ export default function Home() {
   const getSubgridColor = (row: number, col: number) => {
     const subgridIndex = Math.floor(row / 3) * 3 + Math.floor(col / 3);
     const colors = [
-      'bg-red-100', 'bg-yellow-100', 'bg-green-100',
+      'bg-red-100', 'bg-emarald-100', 'bg-green-100',
       'bg-blue-100', 'bg-purple-100', 'bg-pink-100',
-      'bg-indigo-100', 'bg-teal-100', 'bg-emerald-100',
+      'bg-indigo-100', 'bg-teal-100', 'bg-orange-100',
     ];
     return colors[subgridIndex];
   };
