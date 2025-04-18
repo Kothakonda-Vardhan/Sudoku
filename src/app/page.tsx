@@ -46,7 +46,7 @@ export default function Home() {
   const getSubgridColor = (row: number, col: number) => {
     const subgridIndex = Math.floor(row / 3) * 3 + Math.floor(col / 3);
     const colors = [
-      'bg-red-100', 'bg-emarald-100', 'bg-green-100',
+      'bg-red-100', 'bg-yellow-100', 'bg-green-100',
       'bg-blue-100', 'bg-purple-100', 'bg-pink-100',
       'bg-indigo-100', 'bg-teal-100', 'bg-orange-100',
     ];
@@ -122,7 +122,7 @@ export default function Home() {
             <div
               key={`${rowIndex}-${colIndex}`}
               className={`w-20 h-20 border border-gray-900 flex items-center justify-center text-2xl
-                ${getSubgridColor(rowIndex, colIndex)}
+                ${question[rowIndex][colIndex] !== 0 ? getSubgridColor(rowIndex, colIndex) : ''}
                 ${getCellStyle(rowIndex, colIndex)}
                 ${colIndex % 3 === 0 ? 'border-l-2' : ''}
                 ${rowIndex % 3 === 0 ? 'border-t-2' : ''}
