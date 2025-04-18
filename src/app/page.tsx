@@ -117,7 +117,6 @@ export default function Home() {
       <h1 className="text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 drop-shadow-md">
   Sudoku Grid
 </h1>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 
       <div className=" grid grid-cols-9 gap-[2px] max-w-full overflow-auto border border-black bg-black rounded-xl overflow-hidden shadow-lg">
         {userGrid.map((row, rowIndex) => row.map((cell, colIndex) => (
