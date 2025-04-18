@@ -117,11 +117,13 @@ export default function Home() {
       <h1 className="text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 drop-shadow-md">
   Sudoku Grid
 </h1>
-      <div className=" grid grid-cols-9 gap-[2px] w-max border border-black bg-black rounded-xl overflow-hidden shadow-lg">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+      <div className=" grid grid-cols-9 gap-[2px] max-w-full overflow-auto border border-black bg-black rounded-xl overflow-hidden shadow-lg">
         {userGrid.map((row, rowIndex) => row.map((cell, colIndex) => (
             <div
               key={`${rowIndex}-${colIndex}`}
-              className={`w-20 h-20 border border-gray-900 flex items-center justify-center text-2xl
+              className={`w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 border border-gray-900 flex items-center justify-center text-lg sm:text-xl md:text-2xl
                 ${question[rowIndex][colIndex] !== 0 ? getSubgridColor(rowIndex, colIndex) : ''}
                 ${getCellStyle(rowIndex, colIndex)}
                 ${colIndex % 3 === 0 ? 'border-l-2' : ''}
@@ -151,7 +153,8 @@ export default function Home() {
 
       <button
   onClick={resetWrongAnswers}
-  className="mt-6 px-5 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl shadow-md hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 transform hover:scale-105"
+  className="mt-6 px-4 py-2 sm:px-5 sm:py-2 md:px-6 md:py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-sm sm:text-base md:text-lg text-white rounded-xl shadow-md hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 transform hover:scale-105"
+
 >
   Reset Wrong Answers
 </button>
