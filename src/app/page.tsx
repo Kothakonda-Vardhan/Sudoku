@@ -1,103 +1,132 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+
+type Grid = number[][];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [question, setQuestion] = useState<Grid>(
+    Array.from({ length: 9 }, () => Array(9).fill(0))
+  );
+  const [solution, setSolution] = useState<Grid>(
+    Array.from({ length: 9 }, () => Array(9).fill(0))
+  );
+  const [userGrid, setUserGrid] = useState<Grid>(
+    Array.from({ length: 9 }, () => Array(9).fill(0))
+  );
+  const parseStringToGrid = (str: string): number[][] => {
+    const nums = str.split("").map((ch) => parseInt(ch, 10));
+    const grid: number[][] = [];
+    for (let i = 0; i < 9; i++) {
+      grid.push(nums.slice(i * 9, (i + 1) * 9));
+    }
+    return grid;
+  };
+  useEffect(() => {
+    const fetchGrid = async () => {
+      try {
+        const res = await fetch("/api/grid");
+        if (!res.ok) throw new Error("Failed to fetch grid");
+        const data = await res.json();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    const questionGrid = parseStringToGrid(data.question);
+    const solutionGrid = parseStringToGrid(data.solution);
+        
+        setQuestion(questionGrid);
+        setSolution(solutionGrid);
+        setUserGrid(questionGrid); // start from the given puzzle
+      } catch (error) {
+        console.error("Error fetching Sudoku grid:", error);
+      }
+    };
+
+    fetchGrid();
+  }, []);
+
+  const handleChange = (value: string, row: number, col: number) => {
+    if (question[row][col] !== 0) return; // Don't edit clue cells
+
+    const newGrid = userGrid.map((r) => [...r]);
+
+    // Clear input
+    if (value === "") {
+      newGrid[row][col] = 0;
+      setUserGrid(newGrid);
+      return;
+    }
+
+    const num = parseInt(value);
+    if (!Number.isInteger(num) || num < 1 || num > 9) return;
+
+    newGrid[row][col] = num;
+    setUserGrid(newGrid);
+  };
+
+  const resetWrongAnswers = () => {
+    const newGrid = userGrid.map((row, r) =>
+      row.map((val, c) =>
+        question[r][c] === 0 && val !== 0 && val !== solution[r][c] ? 0 : val
+      )
+    );
+    setUserGrid(newGrid);
+  };
+
+  const getCellStyle = (row: number, col: number) => {
+    const borderStyles = `
+      ${col % 3 === 2 ? "border-r-2 border-black" : ""}
+      ${row % 3 === 2 ? "border-b-2 border-black" : ""}
+    `;
+
+    if (question[row][col] !== 0) {
+      return `bg-gray-200 text-black font-bold ${borderStyles}`;
+    }
+
+    const isCorrect = userGrid[row][col] === solution[row][col];
+    const hasInput = userGrid[row][col] !== 0;
+    const color = hasInput ? (isCorrect ? "text-green-700" : "text-red-600") : "text-black";
+
+    return `bg-white ${color} ${borderStyles}`;
+  };
+
+  return (
+    <main className="p-6 min-h-screen bg-gray-100 flex flex-col items-center">
+      <h1 className="text-2xl font-bold mb-4">Sudoku Grid</h1>
+
+      <div className="grid grid-cols-9 gap-[2px] w-max border border-black bg-black">
+        {userGrid.map((row, rowIndex) => row.map((cell, colIndex) => (
+            <div
+              key={`${rowIndex}-${colIndex}`}
+              className={`w-20 h-20 border border-gray-900 flex items-center justify-center text-2xl
+                ${getCellStyle(rowIndex, colIndex)}
+                ${colIndex % 3 === 0 ? 'border-l-2' : ''}
+                ${rowIndex % 3 === 0 ? 'border-t-2' : ''}
+                ${colIndex === 8 ? 'border-r-2' : ''}
+                ${rowIndex === 8 ? 'border-b-2' : ''}
+              `}
+            >
+              {question[rowIndex][colIndex] !== 0 ? (
+                question[rowIndex][colIndex]
+              ) : (
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  className="w-full h-full text-center outline-none bg-transparent"
+                  value={userGrid[rowIndex][colIndex] || ""}
+                  onChange={(e) => handleChange(e.target.value, rowIndex, colIndex)}
+                />
+              )}
+            </div>
+          ))
+        )}
+      </div>
+
+      <button
+        onClick={resetWrongAnswers}
+        className="mt-6 px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+      >
+        Reset Wrong Answers
+      </button>
+    </main>
   );
 }
