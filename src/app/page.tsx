@@ -113,11 +113,11 @@ export default function Home() {
           </button>
         </div>
       ) :
-    (<main className="p-6 min-h-screen bg-gradient-to-br from-yellow-100 via-pink-100 to-indigo-100 flex flex-col items-center">
+    (<main className="p-6 h-screen w-full bg-gradient-to-br from-yellow-100 via-pink-100 to-indigo-100 flex flex-col items-center">
       <h1 className="text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 drop-shadow-md">
   Sudoku Grid
 </h1>
-      <div className="grid grid-cols-9 gap-[2px] w-max border border-black bg-black rounded-xl overflow-hidden shadow-lg">
+      <div className=" grid grid-cols-9 gap-[2px] w-max border border-black bg-black rounded-xl overflow-hidden shadow-lg">
         {userGrid.map((row, rowIndex) => row.map((cell, colIndex) => (
             <div
               key={`${rowIndex}-${colIndex}`}
